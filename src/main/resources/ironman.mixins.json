@@ -6,5 +6,8 @@
     "defaultRequire": 0
   },
   "mixins": [
+  ],
+  "client": [
+    "client.render.entity.PlayerEntityRendererMixin"
   ]
 }
