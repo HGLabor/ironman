@@ -122,23 +122,21 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
         val r = 1f
         val g = 1f
         val b = 1f
-        val scale = 1f
+        val scale = 0.07f
+
+        matrixStack.scale(scale, scale, scale)
+        //matrixStack.translate(5f / 1 / -scale, 8.65f / 1 / -scale, 0f)
+        // matrixStack.translate(-5f * scale, -8.65f * scale, 0f)
+
+        //TODO scalable
+        //TODO Fire
 
         matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180.0f))
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-180.0f))
         if (mirror) {
-           // matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f))
+            matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f))
         }
-
-        matrixStack.scale(scale, scale, scale)
-        //matrixStack.translate(5f + if (!isRightSide) -1f else 0f, -8.5f, 0f)
-        //matrixStack.translate(3.5f + if (!isRightSide) 1f else 0f, 0f, 0f)
-        //matrixStack.translate(5f / 1 / -scale, 8.65f / 1 / -scale, 0f)
-        // matrixStack.translate(-5f * scale, -8.65f * scale, 0f)
-        //matrixStack.scale(1f + speed / 2, 1f + speed, 1f + speed / 2)
-
-        //TODO scalable
-        //TODO Fire
+        matrixStack.translate(-3.5f + if (!isRightSide) -1f else 0f, -17f, 0f)
         buffer.vertex(positionMatrix, h, i.toFloat(), 0f).color(r, g, b, 1f).texture(0f, 0f).next()
         buffer.vertex(positionMatrix, h, (i + 8).toFloat(), 0f).color(r, g, b, 1f).texture(0f, 1f).next()
         buffer.vertex(positionMatrix, h + 8, (i + 8).toFloat(), 0f).color(r, g, b, 1f).texture(1f, 1f).next()
