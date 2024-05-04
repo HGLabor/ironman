@@ -2,7 +2,6 @@ package gg.norisk.heroes.ironman.client.render.entity.feature
 
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.norisk.heroes.ironman.IronManManager.toId
-import gg.norisk.heroes.ironman.player.IronManPlayer
 import gg.norisk.heroes.ironman.player.isIronManFlying
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -14,12 +13,10 @@ import net.minecraft.client.render.model.BakedModelManager
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import org.lwjgl.opengl.GL11
-import kotlin.random.Random
 
 @Environment(EnvType.CLIENT)
 class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : BipedEntityModel<T>>(
@@ -28,23 +25,6 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
     private val outerModel: A,
     bakedModelManager: BakedModelManager
 ) : FeatureRenderer<T, M>(featureRendererContext) {
-
-    private fun spawnInitialFlyParticle(player: PlayerEntity) {
-        if ((player as IronManPlayer).startFlightTimestamp + 2000L > System.currentTimeMillis()) {
-            repeat(2) {
-                val particleRange = Random.nextDouble(0.1,0.4)
-                player.world.addParticle(
-                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
-                    player.x + Random.nextDouble(-particleRange,particleRange),
-                    player.y + Random.nextDouble(-particleRange,particleRange),
-                    player.z + Random.nextDouble(-particleRange,particleRange),
-                    0.0,
-                    0.0,
-                    0.0,
-                )
-            }
-        }
-    }
 
     override fun render(
         matrixStack: MatrixStack,
@@ -60,53 +40,45 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
     ) {
         val player = livingEntity as? PlayerEntity ?: return
         if (!player.isIronManFlying) return
-
-        spawnInitialFlyParticle(player)
-
-        val speed = player.velocity.lengthSquared().toFloat()
+        val speed = player.velocity.horizontalLengthSquared().toFloat()
         update(speed)
+        vertexConsumerProvider.getBuffer(RenderLayer.getGui())
 
         matrixStack.push()
         this.contextModel.setArmAngle(Arm.RIGHT, matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, isRightSide = true)
+        renderFire(matrixStack, livingEntity, isRightSide = true)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.setArmAngle(Arm.LEFT, matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider)
+        renderFire(matrixStack, livingEntity)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.leftLeg.rotate(matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider)
+        renderFire(matrixStack, livingEntity, feet = true)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.rightLeg.rotate(matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, isRightSide = true)
+        renderFire(matrixStack, livingEntity, isRightSide = true, feet = true)
         matrixStack.pop()
 
 
         matrixStack.push()
         this.contextModel.setArmAngle(Arm.RIGHT, matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, isRightSide = true, mirror = true)
+        renderFire(matrixStack, livingEntity, isRightSide = true, mirror = true)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.setArmAngle(Arm.LEFT, matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, mirror = true)
+        renderFire(matrixStack, livingEntity, mirror = true)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.leftLeg.rotate(matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, mirror = true)
+        renderFire(matrixStack, livingEntity, mirror = true, feet = true)
         matrixStack.pop()
         matrixStack.push()
         this.contextModel.rightLeg.rotate(matrixStack)
-        renderFire(matrixStack, livingEntity, vertexConsumerProvider, isRightSide = true, mirror = true)
+        renderFire(matrixStack, livingEntity, isRightSide = true, mirror = true, feet = true)
         matrixStack.pop()
     }
-
-    //Gescaled wird immer from origin aus, es sieht so aus als wäher dieser hier in der Mitte vom Player oder so also musst du zuerst das feuer dahin transformen,
-    // dann scalen und dann wieder zurück transformen
-    //
-    //Oder du renderst das Feuer gleich beim origin, also so, dass der obere Teil vom Feuer bei 0|0|0 ist und scalest es dann
-    //und transformst es dann zu der richtigen position
 
     private var currentFrame = 0
     private var nextUpdate: Long = 0
@@ -122,60 +94,55 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
         }
     }
 
-    fun renderFire(
-        matrixStack: MatrixStack,
-        livingEntity: T,
-        vertexConsumerProvider: VertexConsumerProvider,
-        isRightSide: Boolean = false,
-        mirror: Boolean = false
-    ) {
-        val speed = livingEntity.velocity.horizontalLengthSquared().toFloat() * 1.2f
-        matrixStack.push()
 
-        val i = 0
-        val h: Float = 0f
+    fun renderFire(
+        matrices: MatrixStack,
+        livingEntity: T,
+        isRightSide: Boolean = false,
+        mirror: Boolean = false,
+        feet: Boolean = false
+    ) {
+        val speed = livingEntity.velocity.horizontalLengthSquared().toFloat() * 2f
+
         val identifier: Identifier = "textures/particle/fire_$currentFrame.png".toId()
-        val positionMatrix = matrixStack.peek().positionMatrix
+
+        if (mirror) {
+            matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f))
+        }
+
+        var right = if (feet) -0.01f else -0.075f
+        if (!isRightSide) right *= -1f
+
+        renderTopCenteredQuad(matrices, identifier, right, 0.6f, 0.5f, 0.3f + 0.75f * speed)
+    }
+
+    fun renderTopCenteredQuad(
+        matrices: MatrixStack,
+        identifier: Identifier,
+        x: Float,
+        y: Float,
+        width: Float,
+        height: Float
+    ) {
         val tessellator = Tessellator.getInstance()
         val buffer = tessellator.buffer
 
-        vertexConsumerProvider.getBuffer(RenderLayer.getGui())
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE)
 
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE)
-        val r = 1f
-        val g = 1f
-        val b = 1f
-        val scale = 0.07f
+        val positionMatrix = matrices.peek().positionMatrix
+        buffer.vertex(positionMatrix, x - width * 0.5f, y, 0f).texture(0f, 0f).next()
+        buffer.vertex(positionMatrix, x - width * 0.5f, y + height, 0f).texture(0f, 1f).next()
+        buffer.vertex(positionMatrix, x + width * 0.5f, y + height, 0f).texture(1f, 1f).next()
+        buffer.vertex(positionMatrix, x + width * 0.5f, y, 0f).texture(1f, 0f).next()
 
-        matrixStack.scale(scale, scale, scale)
-        //matrixStack.translate(5f / 1 / -scale, 8.65f / 1 / -scale, 0f)
-        // matrixStack.translate(-5f * scale, -8.65f * scale, 0f)
-
-        //TODO scalable
-        //TODO Fire
-
-        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(180.0f))
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-180.0f))
-        if (mirror) {
-            matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(90.0f))
-        }
-        matrixStack.translate(-3.5f + if (!isRightSide) -1f else 0f, -17f, 0f)
-        buffer.vertex(positionMatrix, h, i.toFloat(), 0f).color(r, g, b, 1f).texture(0f, 0f).next()
-        buffer.vertex(positionMatrix, h, (i + 8).toFloat(), 0f).color(r, g, b, 1f).texture(0f, 1f).next()
-        buffer.vertex(positionMatrix, h + 8, (i + 8).toFloat(), 0f).color(r, g, b, 1f).texture(1f, 1f).next()
-        buffer.vertex(positionMatrix, h + 8, i.toFloat(), 0f).color(r, g, b, 1f).texture(1f, 0f).next()
-
-        RenderSystem.setShader { GameRenderer.getPositionColorTexProgram() }
+        RenderSystem.setShader { GameRenderer.getPositionTexProgram() }
         RenderSystem.setShaderTexture(0, identifier)
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
 
-
-        RenderSystem.disableCull()
         RenderSystem.depthFunc(GL11.GL_ALWAYS)
+        RenderSystem.disableCull()
         tessellator.draw()
-        RenderSystem.depthFunc(GL11.GL_LEQUAL)
         RenderSystem.enableCull()
-
-        matrixStack.pop()
+        RenderSystem.depthFunc(GL11.GL_LEQUAL)
     }
 }
