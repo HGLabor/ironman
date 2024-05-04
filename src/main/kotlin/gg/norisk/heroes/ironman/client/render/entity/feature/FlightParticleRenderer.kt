@@ -2,6 +2,7 @@ package gg.norisk.heroes.ironman.client.render.entity.feature
 
 import com.mojang.blaze3d.systems.RenderSystem
 import gg.norisk.heroes.ironman.IronManManager.toId
+import gg.norisk.heroes.ironman.player.IronManPlayer
 import gg.norisk.heroes.ironman.player.isIronManFlying
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
@@ -13,10 +14,12 @@ import net.minecraft.client.render.model.BakedModelManager
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.Arm
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import org.lwjgl.opengl.GL11
+import kotlin.random.Random
 
 @Environment(EnvType.CLIENT)
 class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : BipedEntityModel<T>>(
@@ -25,6 +28,23 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
     private val outerModel: A,
     bakedModelManager: BakedModelManager
 ) : FeatureRenderer<T, M>(featureRendererContext) {
+
+    private fun spawnInitialFlyParticle(player: PlayerEntity) {
+        if ((player as IronManPlayer).startFlightTimestamp + 2000L > System.currentTimeMillis()) {
+            repeat(2) {
+                val particleRange = Random.nextDouble(0.1,0.4)
+                player.world.addParticle(
+                    ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    player.x + Random.nextDouble(-particleRange,particleRange),
+                    player.y + Random.nextDouble(-particleRange,particleRange),
+                    player.z + Random.nextDouble(-particleRange,particleRange),
+                    0.0,
+                    0.0,
+                    0.0,
+                )
+            }
+        }
+    }
 
     override fun render(
         matrixStack: MatrixStack,
@@ -40,7 +60,10 @@ class FlightParticleRenderer<T : LivingEntity, M : BipedEntityModel<T>, A : Bipe
     ) {
         val player = livingEntity as? PlayerEntity ?: return
         if (!player.isIronManFlying) return
-        val speed = player.velocity.horizontalLengthSquared().toFloat()
+
+        spawnInitialFlyParticle(player)
+
+        val speed = player.velocity.lengthSquared().toFloat()
         update(speed)
 
         matrixStack.push()

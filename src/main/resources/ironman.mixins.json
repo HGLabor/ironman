@@ -7,11 +7,13 @@
   },
   "mixins": [
     "client.render.entity.model.PlayerEntityModelMixin",
+    "entity.EntityMixin",
     "entity.LivingEntityMixin",
     "entity.player.PlayerEntityMixin"
   ],
   "client": [
     "client.KeyboardMixin",
+    "client.render.CameraMixin",
     "client.render.entity.PlayerEntityRendererMixin"
   ]
 }

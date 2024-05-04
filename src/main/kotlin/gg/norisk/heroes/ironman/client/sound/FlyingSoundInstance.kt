@@ -29,9 +29,7 @@ class FlyingSoundInstance(private val player: ClientPlayerEntity) :
             this.z = player.z.toFloat().toDouble()
             val f = player.velocity.lengthSquared().toFloat()
             if (f.toDouble() >= 1.0E-7) {
-                this.volume = MathHelper.clamp(f / 4.0f, 0.0f, 5.0f)
-            } else {
-                this.volume = 0.0f
+                this.volume = MathHelper.clamp(f / 4.0f, 0.02f, 5.0f)
             }
 
             if (this.tickCount < 20) {

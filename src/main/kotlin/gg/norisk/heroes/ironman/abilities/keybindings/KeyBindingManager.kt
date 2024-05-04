@@ -12,6 +12,13 @@ object KeyBindingManager {
             "key.ironman.categories.abilities"
         )
     )
+    val secondAbilityKey = KeyBindingHelper.registerKeyBinding(
+        KeyBinding(
+            "key.ironman.boost",
+            GLFW.GLFW_KEY_C,
+            "key.ironman.categories.abilities"
+        )
+    )
 
     fun init() {}
 }

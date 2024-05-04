@@ -1,22 +1,30 @@
 package gg.norisk.heroes.ironman.mixin.client.render.entity;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import gg.norisk.heroes.ironman.IronManManager;
 import gg.norisk.heroes.ironman.client.render.entity.feature.FlightParticleRenderer;
 import gg.norisk.heroes.ironman.player.IronManPlayer;
 import gg.norisk.heroes.ironman.player.IronManPlayerKt;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.ArmorEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntityRenderer.class)
 public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
@@ -36,6 +44,30 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
         );
     }
 
+    @WrapOperation(
+            method = "renderArm",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/SkinTextures;comp_1626()Lnet/minecraft/util/Identifier;")
+    )
+    private Identifier handleFakeSkin(SkinTextures instance, Operation<Identifier> original, MatrixStack matrixStack,
+                                      VertexConsumerProvider vertexConsumerProvider,
+                                      int i,
+                                      AbstractClientPlayerEntity player,
+                                      ModelPart modelPart,
+                                      ModelPart modelPart2) {
+        if (IronManPlayerKt.isIronMan(player)) {
+            return IronManManager.INSTANCE.getSkin();
+        } else {
+            return original.call(instance);
+        }
+    }
+
+    @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;", at = @At("RETURN"), cancellable = true)
+    private void injected(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
+        if (IronManPlayerKt.isIronMan(abstractClientPlayerEntity)) {
+            cir.setReturnValue(IronManManager.INSTANCE.getSkin());
+        }
+    }
+
     @Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFF)V", at = @At(value = "HEAD"), cancellable = true)
     private void setupTransformsInjection(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
         if (!IronManPlayerKt.isIronManFlying(abstractClientPlayerEntity)) return;
@@ -43,7 +75,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
         if (i > 0.0F) {
             float speed = (float) abstractClientPlayerEntity.getVelocity().lengthSquared() * 2;
             super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
-            var j = MathHelper.clamp( -45f * speed - abstractClientPlayerEntity.getPitch(),-70f,45f);
+            var j = MathHelper.clamp(-45f * speed - abstractClientPlayerEntity.getPitch(), -70f, 45f);
             var k = MathHelper.lerp(i, 0.0F, j);
             var size = abstractClientPlayerEntity.getHeight() / 2;
             matrixStack.translate(0f, size, 0f);

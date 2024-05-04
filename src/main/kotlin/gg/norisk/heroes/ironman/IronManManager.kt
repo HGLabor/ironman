@@ -14,6 +14,7 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
     val modId = "ironman"
     fun String.toId() = Identifier(modId, this)
     val logger = LogManager.getLogger("modId")
+    val skin = "textures/ironman_skin.png".toId()
 
     override fun onInitialize() {
         logger.info("Starting IronMan...")
