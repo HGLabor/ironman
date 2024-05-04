@@ -6,8 +6,12 @@
     "defaultRequire": 0
   },
   "mixins": [
+    "client.render.entity.model.PlayerEntityModelMixin",
+    "entity.LivingEntityMixin",
+    "entity.player.PlayerEntityMixin"
   ],
   "client": [
+    "client.KeyboardMixin",
     "client.render.entity.PlayerEntityRendererMixin"
   ]
 }

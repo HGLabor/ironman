@@ -1,12 +1,15 @@
 package gg.norisk.heroes.ironman
 
+import gg.norisk.heroes.ironman.abilities.FlyAbility
+import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
+import gg.norisk.heroes.ironman.registry.SoundRegistry
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.api.ModInitializer
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 
-object IronManManager: ModInitializer, DedicatedServerModInitializer, ClientModInitializer {
+object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientModInitializer {
     val modId = "ironman"
     fun String.toId() = Identifier(modId, this)
     val logger = LogManager.getLogger("modId")
@@ -14,11 +17,15 @@ object IronManManager: ModInitializer, DedicatedServerModInitializer, ClientModI
     override fun onInitialize() {
         logger.info("Starting IronMan...")
         // Common initialization
+        FlyAbility.initServer()
+        SoundRegistry.init()
     }
 
     override fun onInitializeClient() {
         logger.info("Starting Client IronMan...")
         // Client initialization
+        KeyBindingManager.init()
+        FlyAbility.initClient()
     }
 
     override fun onInitializeServer() {

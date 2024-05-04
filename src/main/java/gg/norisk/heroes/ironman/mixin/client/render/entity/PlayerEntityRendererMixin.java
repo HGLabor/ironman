@@ -1,6 +1,8 @@
 package gg.norisk.heroes.ironman.mixin.client.render.entity;
 
 import gg.norisk.heroes.ironman.client.render.entity.feature.FlightParticleRenderer;
+import gg.norisk.heroes.ironman.player.IronManPlayer;
+import gg.norisk.heroes.ironman.player.IronManPlayerKt;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
@@ -8,6 +10,9 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.ArmorEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,5 +34,22 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
                         context.getModelManager()
                 )
         );
+    }
+
+    @Inject(method = "setupTransforms(Lnet/minecraft/client/network/AbstractClientPlayerEntity;Lnet/minecraft/client/util/math/MatrixStack;FFF)V", at = @At(value = "HEAD"), cancellable = true)
+    private void setupTransformsInjection(AbstractClientPlayerEntity abstractClientPlayerEntity, MatrixStack matrixStack, float f, float g, float h, CallbackInfo ci) {
+        if (!IronManPlayerKt.isIronManFlying(abstractClientPlayerEntity)) return;
+        var i = ((IronManPlayer) abstractClientPlayerEntity).getFlyingLeaningPitch(h);
+        if (i > 0.0F) {
+            float speed = (float) abstractClientPlayerEntity.getVelocity().lengthSquared() * 2;
+            super.setupTransforms(abstractClientPlayerEntity, matrixStack, f, g, h);
+            var j = MathHelper.clamp( -45f * speed - abstractClientPlayerEntity.getPitch(),-70f,45f);
+            var k = MathHelper.lerp(i, 0.0F, j);
+            var size = abstractClientPlayerEntity.getHeight() / 2;
+            matrixStack.translate(0f, size, 0f);
+            matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(k));
+            matrixStack.translate(0f, -size, 0f);
+            ci.cancel();
+        }
     }
 }

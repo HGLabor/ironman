@@ -1,0 +1,13 @@
+{
+  "jetpack": {
+    "sounds": [
+      "ironman:jetpack"
+    ]
+  },
+  "fly_start_sound": {
+    "sounds": [
+      "ironman:fly_start_sound"
+    ]
+  }
+}
+
