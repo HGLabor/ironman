@@ -2,6 +2,7 @@ package gg.norisk.heroes.ironman
 
 import gg.norisk.heroes.ironman.abilities.FlyAbility
 import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
+import gg.norisk.heroes.ironman.registry.ItemRegistry
 import gg.norisk.heroes.ironman.registry.SoundRegistry
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.api.DedicatedServerModInitializer
@@ -19,6 +20,7 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
         // Common initialization
         FlyAbility.initServer()
         SoundRegistry.init()
+        ItemRegistry.init()
     }
 
     override fun onInitializeClient() {
