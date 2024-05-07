@@ -8,6 +8,7 @@ import net.minecraft.sound.SoundEvent
 object SoundRegistry {
     var JETPACK = Registry.register(Registries.SOUND_EVENT, "jetpack".toId(), SoundEvent.of("jetpack".toId()))
     var FLY_START_STOUND = Registry.register(Registries.SOUND_EVENT, "fly_start_sound".toId(), SoundEvent.of("fly_start_sound".toId()))
+    var SUIT_UP = Registry.register(Registries.SOUND_EVENT, "suit_up".toId(), SoundEvent.of("suit_up".toId()))
 
     fun init() {
     }

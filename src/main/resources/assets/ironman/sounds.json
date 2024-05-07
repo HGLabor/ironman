@@ -8,6 +8,11 @@
     "sounds": [
       "ironman:fly_start_sound"
     ]
+  },
+  "suit_up": {
+    "sounds": [
+      "ironman:suit_up"
+    ]
   }
 }
 

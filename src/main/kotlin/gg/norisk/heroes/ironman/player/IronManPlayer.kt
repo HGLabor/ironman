@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity
 interface IronManPlayer {
     fun getFlyingLeaningPitch(tickDelta: Float): Float
     var startFlightTimestamp: Long
+    var transformTimestamp: Long
 }
 
 val flyTracker: TrackedData<Boolean> =

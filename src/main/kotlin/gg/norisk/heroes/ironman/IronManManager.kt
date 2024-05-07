@@ -1,6 +1,7 @@
 package gg.norisk.heroes.ironman
 
 import gg.norisk.heroes.ironman.abilities.FlyAbility
+import gg.norisk.heroes.ironman.abilities.TransformAbility
 import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
 import gg.norisk.heroes.ironman.registry.ItemRegistry
 import gg.norisk.heroes.ironman.registry.SoundRegistry
@@ -20,6 +21,7 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
         logger.info("Starting IronMan...")
         // Common initialization
         FlyAbility.initServer()
+        TransformAbility.initServer()
         SoundRegistry.init()
         ItemRegistry.init()
     }

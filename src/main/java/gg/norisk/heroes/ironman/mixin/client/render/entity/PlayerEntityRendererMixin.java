@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import gg.norisk.heroes.ironman.IronManManager;
 import gg.norisk.heroes.ironman.client.render.entity.feature.FlightParticleRenderer;
+import gg.norisk.heroes.ironman.client.render.entity.feature.IronManArmorOverlayRenderer;
 import gg.norisk.heroes.ironman.player.IronManPlayer;
 import gg.norisk.heroes.ironman.player.IronManPlayerKt;
 import net.minecraft.client.model.ModelPart;
@@ -42,6 +43,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
                         context.getModelManager()
                 )
         );
+        this.addFeature(new IronManArmorOverlayRenderer(this));
     }
 
     @WrapOperation(
@@ -54,7 +56,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
                                       AbstractClientPlayerEntity player,
                                       ModelPart modelPart,
                                       ModelPart modelPart2) {
-        if (IronManPlayerKt.isIronMan(player)) {
+        if (IronManArmorOverlayRenderer.Companion.shouldRenderIronManSkin(player)) {
             return IronManManager.INSTANCE.getSkin();
         } else {
             return original.call(instance);
@@ -63,7 +65,7 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
 
     @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;", at = @At("RETURN"), cancellable = true)
     private void injected(AbstractClientPlayerEntity abstractClientPlayerEntity, CallbackInfoReturnable<Identifier> cir) {
-        if (IronManPlayerKt.isIronMan(abstractClientPlayerEntity)) {
+        if (IronManArmorOverlayRenderer.Companion.shouldRenderIronManSkin(abstractClientPlayerEntity)) {
             cir.setReturnValue(IronManManager.INSTANCE.getSkin());
         }
     }

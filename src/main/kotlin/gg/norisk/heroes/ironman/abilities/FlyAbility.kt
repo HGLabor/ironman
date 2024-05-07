@@ -6,6 +6,7 @@ import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
 import gg.norisk.heroes.ironman.client.sound.FlyingSoundInstance
 import gg.norisk.heroes.ironman.player.IronManPlayer
 import gg.norisk.heroes.ironman.player.flyTracker
+import gg.norisk.heroes.ironman.player.isIronMan
 import gg.norisk.heroes.ironman.player.isIronManFlying
 import gg.norisk.heroes.ironman.registry.SoundRegistry
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
@@ -29,6 +30,7 @@ import net.silkmc.silk.network.packet.c2sPacket
 object FlyAbility {
     val firstAbilityTogglePacket = c2sPacket<Boolean>("first-ability-toggle".toId())
     val secondAbilityTogglePacket = c2sPacket<Boolean>("second-ability-toggle".toId())
+    val thirdAbilityTogglePacket = c2sPacket<Boolean>("third-ability-toggle".toId())
 
     fun initClient() {
         KeyEvents.keyEvent.listen { event ->
@@ -40,6 +42,10 @@ object FlyAbility {
                 if (event.isClicked()) {
                     secondAbilityTogglePacket.send(true)
                 }
+            } else if (event.matchesKeyBinding(KeyBindingManager.thirdAbilityKey)) {
+                if (event.isClicked()) {
+                    thirdAbilityTogglePacket.send(true)
+                }
             }
         }
     }
@@ -47,6 +53,7 @@ object FlyAbility {
     fun initServer() {
         firstAbilityTogglePacket.receiveOnServer { packet, context ->
             val player = context.player
+            if (!player.isIronMan) return@receiveOnServer
             player.isIronManFlying = !player.isIronManFlying
             if (player.isIronManFlying) {
                 val world = player.world as ServerWorld
@@ -96,8 +103,6 @@ object FlyAbility {
                 if (player.isIronManFlying && player is ClientPlayerEntity) {
                     MinecraftClient.getInstance().soundManager.play(FlyingSoundInstance(player))
                 }
-            } else {
-
             }
         }
     }

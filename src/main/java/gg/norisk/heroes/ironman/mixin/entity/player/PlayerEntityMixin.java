@@ -31,6 +31,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     private float flyingLeaningPitch;
     @Unique
     private long startFlightTimestamp;
+    @Unique
+    private long transformTimestamp;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -39,7 +41,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     private void initDataTrackerInjecetion(CallbackInfo ci) {
         this.dataTracker.startTracking(IronManPlayerKt.getFlyTracker(), false);
-        this.dataTracker.startTracking(IronManPlayerKt.getIronManTracker(), true);
+        this.dataTracker.startTracking(IronManPlayerKt.getIronManTracker(), false);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -89,5 +91,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Override
     public void setStartFlightTimestamp(long startFlightTimestamp) {
         this.startFlightTimestamp = startFlightTimestamp;
+    }
+
+    @Unique
+    @Override
+    public long getTransformTimestamp() {
+        return transformTimestamp;
+    }
+    @Unique
+    @Override
+    public void setTransformTimestamp(long transformTimestamp) {
+        this.transformTimestamp = transformTimestamp;
     }
 }
