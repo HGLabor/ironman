@@ -23,8 +23,6 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Shadow
     public abstract PlayerAbilities getAbilities();
 
-    @Shadow public abstract void sendMessage(Text text, boolean bl);
-
     @Unique
     private float lastFlyingLeaningPitch;
     @Unique
@@ -33,6 +31,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     private long startFlightTimestamp;
     @Unique
     private long transformTimestamp;
+    @Unique
+    private long repulsorTimestamp;
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -42,6 +42,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     private void initDataTrackerInjecetion(CallbackInfo ci) {
         this.dataTracker.startTracking(IronManPlayerKt.getFlyTracker(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getIronManTracker(), false);
+        this.dataTracker.startTracking(IronManPlayerKt.getRepulsorChargeTracker(), false);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -102,5 +103,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Override
     public void setTransformTimestamp(long transformTimestamp) {
         this.transformTimestamp = transformTimestamp;
+    }
+
+    @Override
+    public long getRepulsorTimestamp() {
+        return repulsorTimestamp;
+    }
+
+    @Override
+    public void setRepulsorTimestamp(long repulsorTimestamp) {
+        this.repulsorTimestamp = repulsorTimestamp;
     }
 }

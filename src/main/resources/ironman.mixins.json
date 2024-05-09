@@ -13,7 +13,10 @@
   ],
   "client": [
     "client.KeyboardMixin",
+    "client.MouseMixin",
     "client.render.CameraMixin",
-    "client.render.entity.PlayerEntityRendererMixin"
+    "client.render.GameRendererMixin",
+    "client.render.entity.PlayerEntityRendererMixin",
+    "entity.EntityRenderDispatcherMixin"
   ]
 }

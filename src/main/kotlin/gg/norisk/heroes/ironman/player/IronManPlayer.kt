@@ -10,16 +10,23 @@ interface IronManPlayer {
     fun getFlyingLeaningPitch(tickDelta: Float): Float
     var startFlightTimestamp: Long
     var transformTimestamp: Long
+    var repulsorTimestamp: Long
 }
 
 val flyTracker: TrackedData<Boolean> =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val ironManTracker: TrackedData<Boolean> =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+val repulsorChargeTracker: TrackedData<Boolean> =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 
 var PlayerEntity.isIronMan: Boolean
     get() = this.dataTracker.get(ironManTracker)
     set(value) = this.dataTracker.set(ironManTracker, value)
+
+var PlayerEntity.isRepulsorCharging: Boolean
+    get() = this.dataTracker.get(repulsorChargeTracker)
+    set(value) = this.dataTracker.set(repulsorChargeTracker, value)
 
 var PlayerEntity.isIronManFlying: Boolean
     get() = this.dataTracker.get(flyTracker)

@@ -13,6 +13,16 @@
     "sounds": [
       "ironman:suit_up"
     ]
+  },
+  "repulsor_shoot": {
+    "sounds": [
+      "ironman:repulsor_shoot"
+    ]
+  },
+  "repulsor_charge": {
+    "sounds": [
+      "ironman:repulsor_charge"
+    ]
   }
 }
 

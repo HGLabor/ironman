@@ -4,6 +4,7 @@ val silkVersion = "1.10.3"
 plugins {
     kotlin("jvm") version "1.9.21"
     id("fabric-loom") version "1.5-SNAPSHOT"
+    kotlin("plugin.serialization") version "1.9.21"
 }
 
 val mcVersion = "1.20.4"

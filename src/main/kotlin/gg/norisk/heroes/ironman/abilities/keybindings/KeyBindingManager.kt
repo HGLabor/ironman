@@ -14,7 +14,7 @@ object KeyBindingManager {
     )
     val secondAbilityKey = KeyBindingHelper.registerKeyBinding(
         KeyBinding(
-            "key.ironman.boost",
+            "key.ironman.repulsor",
             GLFW.GLFW_KEY_C,
             "key.ironman.categories.abilities"
         )

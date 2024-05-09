@@ -41,6 +41,8 @@ object FlyAbility {
             } else if (event.matchesKeyBinding(KeyBindingManager.secondAbilityKey)) {
                 if (event.isClicked()) {
                     secondAbilityTogglePacket.send(true)
+                } else if (event.isReleased()) {
+                    secondAbilityTogglePacket.send(false)
                 }
             } else if (event.matchesKeyBinding(KeyBindingManager.thirdAbilityKey)) {
                 if (event.isClicked()) {
@@ -76,10 +78,6 @@ object FlyAbility {
                 player.abilities.flying = true
                 player.sendAbilitiesUpdate()
             }
-        }
-        secondAbilityTogglePacket.receiveOnServer { packet, context ->
-            val player = context.player
-            player.sendAbilitiesUpdate()
         }
     }
 

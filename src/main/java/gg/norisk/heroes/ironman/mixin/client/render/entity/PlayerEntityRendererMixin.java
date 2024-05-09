@@ -3,6 +3,7 @@ package gg.norisk.heroes.ironman.mixin.client.render.entity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import gg.norisk.heroes.ironman.IronManManager;
+import gg.norisk.heroes.ironman.abilities.RepulsorBlastAbility;
 import gg.norisk.heroes.ironman.client.render.entity.feature.FlightParticleRenderer;
 import gg.norisk.heroes.ironman.client.render.entity.feature.IronManArmorOverlayRenderer;
 import gg.norisk.heroes.ironman.player.IronManPlayer;
@@ -61,6 +62,11 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer<Abs
         } else {
             return original.call(instance);
         }
+    }
+
+    @Inject(method = "renderArm", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;II)V"))
+    private void injected(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, AbstractClientPlayerEntity abstractClientPlayerEntity, ModelPart modelPart, ModelPart modelPart2, CallbackInfo ci) {
+        RepulsorBlastAbility.INSTANCE.renderHand(matrixStack,vertexConsumerProvider,i,abstractClientPlayerEntity,modelPart,modelPart2);
     }
 
     @Inject(method = "getTexture(Lnet/minecraft/client/network/AbstractClientPlayerEntity;)Lnet/minecraft/util/Identifier;", at = @At("RETURN"), cancellable = true)
