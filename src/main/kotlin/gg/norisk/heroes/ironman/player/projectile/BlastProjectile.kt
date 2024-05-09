@@ -16,6 +16,7 @@ import net.minecraft.util.math.Vec3d
 import net.minecraft.world.World
 import net.silkmc.silk.commands.command
 import net.silkmc.silk.core.entity.modifyVelocity
+import kotlin.random.Random
 
 class BlastProjectile(entityType: EntityType<out BlastProjectile>, world: World) :
     ProjectileEntity(entityType, world) {
@@ -50,6 +51,10 @@ class BlastProjectile(entityType: EntityType<out BlastProjectile>, world: World)
         if (entity is LivingEntity) {
             createExplosion()
             entityHitResult.entity.damage(this.damageSources.mobProjectile(this, entity), 2.5f)
+            (entityHitResult.entity as? LivingEntity?)?.takeKnockback(
+                (2 * 0.5f).toDouble(),
+                Random.nextDouble(-5.0,5.0),
+                Random.nextDouble(-5.0,5.0))
         }
     }
 

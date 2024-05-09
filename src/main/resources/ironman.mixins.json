@@ -14,9 +14,11 @@
   "client": [
     "client.KeyboardMixin",
     "client.MouseMixin",
+    "client.network.ClientPlayerEntityMixin",
     "client.render.CameraMixin",
     "client.render.GameRendererMixin",
     "client.render.entity.PlayerEntityRendererMixin",
+    "client.render.entity.model.BipedEntityModelMixin",
     "entity.EntityRenderDispatcherMixin"
   ]
 }
