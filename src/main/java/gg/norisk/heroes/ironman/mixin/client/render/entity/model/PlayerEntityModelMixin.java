@@ -25,8 +25,10 @@ public abstract class PlayerEntityModelMixin<T extends LivingEntity> extends Bip
             float p = 0.33333334F;
             this.head.pitch = 0f;
             this.hat.pitch = 0f;
-            this.leftArm.pitch = p;
-            this.rightArm.pitch = p;
+            if (!(IronManPlayerKt.isMissileSelecting(player) || IronManPlayerKt.isRepulsorCharging(player))) {
+                this.leftArm.pitch = p;
+                this.rightArm.pitch = p;
+            }
             this.leftLeg.pitch = p;
             this.rightLeg.pitch = p;
         }

@@ -2,6 +2,8 @@ package gg.norisk.heroes.ironman
 
 import gg.norisk.heroes.ironman.abilities.*
 import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
+import gg.norisk.heroes.ironman.client.render.Ability
+import gg.norisk.heroes.ironman.client.render.AbilityRenderer
 import gg.norisk.heroes.ironman.client.render.CameraShaker
 import gg.norisk.heroes.ironman.client.render.entity.BlastProjectileRenderer
 import gg.norisk.heroes.ironman.client.render.entity.MissileEntityRenderer
@@ -44,6 +46,7 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
         // Client initialization
         KeyBindingManager.init()
         EnergyBeamAbility.initClient()
+        AbilityRenderer.init()
         FlyAbility.initClient()
         CameraShaker.initClient()
         MissileAbility.initClient()
