@@ -181,7 +181,7 @@ object MissileAbility {
                             player.x,
                             player.y,
                             player.z, SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, SoundCategory.AMBIENT,
-                            3.0f,
+                            0.8f,
                             Random.nextDouble(0.9, 1.2).toFloat()
                         )
                     }
