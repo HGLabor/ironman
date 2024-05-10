@@ -1,6 +1,7 @@
 package gg.norisk.heroes.ironman.mixin.client.render.entity.model;
 
 import gg.norisk.heroes.ironman.player.IronManPlayerKt;
+import gg.norisk.heroes.ironman.player.projectile.SentryEntity;
 import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.ModelWithArms;
@@ -25,6 +26,12 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
     private void animateModelInjection(T livingEntity, float f, float g, float h, CallbackInfo ci) {
         if (livingEntity instanceof PlayerEntity player && (IronManPlayerKt.isRepulsorCharging(player) || IronManPlayerKt.isMissileSelecting(player))) {
             this.leftArmPose = this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
+        } else if (livingEntity instanceof SentryEntity sentryEntity) {
+            if (sentryEntity.getHasTarget()) {
+                this.leftArmPose = this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
+            } else {
+                this.leftArmPose = this.rightArmPose = BipedEntityModel.ArmPose.EMPTY;
+            }
         }
     }
 }

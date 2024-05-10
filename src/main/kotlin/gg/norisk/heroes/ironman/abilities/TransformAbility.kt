@@ -8,6 +8,7 @@ import gg.norisk.heroes.ironman.registry.SoundRegistry
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.data.TrackedData
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.sound.SoundCategory
 
 object TransformAbility {
@@ -18,7 +19,15 @@ object TransformAbility {
         thirdAbilityTogglePacket.receiveOnServer { packet, context ->
             val player = context.player
             player.isIronMan = !player.isIronMan
+
+            if (!player.isIronMan && player.isInSneakingPose) {
+                SentryModeAbility.spawnSentry(player)
+            }
         }
+    }
+
+    fun transform(playerEntity: ServerPlayerEntity) {
+        playerEntity.isIronMan = true
     }
 
     fun handleTrackedDataSet(livingEntity: LivingEntity, trackedData: TrackedData<*>) {

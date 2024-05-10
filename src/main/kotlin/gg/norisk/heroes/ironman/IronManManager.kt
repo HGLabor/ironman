@@ -8,6 +8,7 @@ import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
 import gg.norisk.heroes.ironman.client.render.CameraShaker
 import gg.norisk.heroes.ironman.client.render.entity.BlastProjectileRenderer
 import gg.norisk.heroes.ironman.client.render.entity.MissileEntityRenderer
+import gg.norisk.heroes.ironman.client.render.entity.SentryEntityRenderer
 import gg.norisk.heroes.ironman.player.projectile.BlastProjectile
 import gg.norisk.heroes.ironman.registry.EntityRegistry
 import gg.norisk.heroes.ironman.registry.ItemRegistry
@@ -50,6 +51,7 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
         RepulsorBlastAbility.initClient()
         EntityRendererRegistry.register(EntityRegistry.BLAST, ::BlastProjectileRenderer)
         EntityRendererRegistry.register(EntityRegistry.MISSILE, ::MissileEntityRenderer)
+        EntityRendererRegistry.register(EntityRegistry.SENTRY, ::SentryEntityRenderer)
     }
 
     override fun onInitializeServer() {
