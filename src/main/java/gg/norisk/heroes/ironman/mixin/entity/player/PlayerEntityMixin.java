@@ -11,12 +11,18 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements IronManPlayer {
@@ -33,6 +39,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     private long transformTimestamp;
     @Unique
     private long repulsorTimestamp;
+    @Unique
+    private final Map<UUID,Integer> missileTargets = new HashMap<>();
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
@@ -43,6 +51,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
         this.dataTracker.startTracking(IronManPlayerKt.getFlyTracker(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getIronManTracker(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getRepulsorChargeTracker(), false);
+        this.dataTracker.startTracking(IronManPlayerKt.getMissileSelector(), false);
+        this.dataTracker.startTracking(IronManPlayerKt.getCurrentMissileTargetTracker(), Optional.empty());
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
@@ -113,5 +123,11 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Override
     public void setRepulsorTimestamp(long repulsorTimestamp) {
         this.repulsorTimestamp = repulsorTimestamp;
+    }
+
+    @NotNull
+    @Override
+    public Map<UUID, Integer> getMissileTargets() {
+        return missileTargets;
     }
 }

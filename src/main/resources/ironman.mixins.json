@@ -17,6 +17,7 @@
     "client.network.ClientPlayerEntityMixin",
     "client.render.CameraMixin",
     "client.render.GameRendererMixin",
+    "client.render.entity.EntityRendererMixin",
     "client.render.entity.PlayerEntityRendererMixin",
     "client.render.entity.model.BipedEntityModelMixin",
     "entity.EntityRenderDispatcherMixin"

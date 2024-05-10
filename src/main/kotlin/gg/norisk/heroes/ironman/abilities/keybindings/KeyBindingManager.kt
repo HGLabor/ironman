@@ -26,6 +26,13 @@ object KeyBindingManager {
             "key.ironman.categories.abilities"
         )
     )
+    val fourthAbilityKey = KeyBindingHelper.registerKeyBinding(
+        KeyBinding(
+            "key.ironman.missile",
+            GLFW.GLFW_KEY_V,
+            "key.ironman.categories.abilities"
+        )
+    )
 
     fun init() {}
 }

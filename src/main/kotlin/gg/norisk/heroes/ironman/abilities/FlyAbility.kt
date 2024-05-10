@@ -1,6 +1,7 @@
 package gg.norisk.heroes.ironman.abilities
 
 import gg.norisk.heroes.events.KeyEvents
+import gg.norisk.heroes.events.MouseEvents
 import gg.norisk.heroes.ironman.IronManManager.toId
 import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
 import gg.norisk.heroes.ironman.client.sound.FlyingSoundInstance
@@ -31,8 +32,14 @@ object FlyAbility {
     val firstAbilityTogglePacket = c2sPacket<Boolean>("first-ability-toggle".toId())
     val secondAbilityTogglePacket = c2sPacket<Boolean>("second-ability-toggle".toId())
     val thirdAbilityTogglePacket = c2sPacket<Boolean>("third-ability-toggle".toId())
+    val fourthAbilityTogglePacket = c2sPacket<Boolean>("fourth-ability-toggle".toId())
+
+    val mouseScrollPacket = c2sPacket<Double>("mouse-scroll".toId())
 
     fun initClient() {
+        MouseEvents.mouseScrollEvent.listen { event ->
+            mouseScrollPacket.send(event.vertical)
+        }
         KeyEvents.keyEvent.listen { event ->
             if (event.matchesKeyBinding(KeyBindingManager.firstAbilityKey)) {
                 if (event.isClicked()) {
@@ -47,6 +54,12 @@ object FlyAbility {
             } else if (event.matchesKeyBinding(KeyBindingManager.thirdAbilityKey)) {
                 if (event.isClicked()) {
                     thirdAbilityTogglePacket.send(true)
+                }
+            } else if (event.matchesKeyBinding(KeyBindingManager.fourthAbilityKey)) {
+                if (event.isClicked()) {
+                    fourthAbilityTogglePacket.send(true)
+                } else if (event.isReleased()) {
+                    fourthAbilityTogglePacket.send(false)
                 }
             }
         }

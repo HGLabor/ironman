@@ -29,15 +29,17 @@ object RaycastUtils {
         return entityHitResult?.entity
     }
 
-    fun raycastEntity(entity: Entity, i: Int): Optional<Entity> {
+    fun raycastEntity(
+        entity: Entity,
+        i: Int,
+        predicate: Predicate<Entity> = Predicate { entityx: Entity -> !entityx.isSpectator && entityx.canHit() }
+    ): Optional<Entity> {
         return run {
             val vec3d = entity.eyePos
             val vec3d2 = entity.getRotationVec(1.0f).multiply(i.toDouble())
             val vec3d3 = vec3d.add(vec3d2)
             val box = entity.boundingBox.stretch(vec3d2).expand(1.0)
             val j = i * i
-            val predicate =
-                Predicate { entityx: Entity -> !entityx.isSpectator && entityx.canHit() }
             val entityHitResult = ProjectileUtil.raycast(entity, vec3d, vec3d3, box, predicate, j.toDouble())
             if (entityHitResult == null) {
                 Optional.empty()

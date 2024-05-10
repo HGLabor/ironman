@@ -23,6 +23,16 @@
     "sounds": [
       "ironman:repulsor_charge"
     ]
+  },
+  "missile_target_found": {
+    "sounds": [
+      "ironman:missile_target_found"
+    ]
+  },
+  "missile_empty": {
+    "sounds": [
+      "ironman:missile_empty"
+    ]
   }
 }
 

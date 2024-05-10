@@ -23,7 +23,7 @@ public abstract class BipedEntityModelMixin<T extends LivingEntity> extends Anim
 
     @Inject(method = "animateModel(Lnet/minecraft/entity/LivingEntity;FFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/model/AnimalModel;animateModel(Lnet/minecraft/entity/Entity;FFF)V"))
     private void animateModelInjection(T livingEntity, float f, float g, float h, CallbackInfo ci) {
-        if (livingEntity instanceof PlayerEntity player && IronManPlayerKt.isRepulsorCharging(player)) {
+        if (livingEntity instanceof PlayerEntity player && (IronManPlayerKt.isRepulsorCharging(player) || IronManPlayerKt.isMissileSelecting(player))) {
             this.leftArmPose = this.rightArmPose = BipedEntityModel.ArmPose.BOW_AND_ARROW;
         }
     }
