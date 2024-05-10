@@ -3,6 +3,7 @@ package gg.norisk.heroes.ironman.mixin.entity.player;
 import gg.norisk.heroes.ironman.abilities.FlyAbility;
 import gg.norisk.heroes.ironman.player.IronManPlayer;
 import gg.norisk.heroes.ironman.player.IronManPlayerKt;
+import gg.norisk.heroes.utils.Animation;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerAbilities;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,6 +42,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Unique
     private long repulsorTimestamp;
     @Unique
+    private Animation beamAnimation;
+    @Unique
     private final Map<UUID,Integer> missileTargets = new HashMap<>();
 
     protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
@@ -52,6 +56,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
         this.dataTracker.startTracking(IronManPlayerKt.getIronManTracker(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getRepulsorChargeTracker(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getMissileSelector(), false);
+        this.dataTracker.startTracking(IronManPlayerKt.getHoldingLeftClick(), false);
         this.dataTracker.startTracking(IronManPlayerKt.getCurrentMissileTargetTracker(), Optional.empty());
     }
 
@@ -129,5 +134,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements IronManP
     @Override
     public Map<UUID, Integer> getMissileTargets() {
         return missileTargets;
+    }
+
+    @Nullable
+    @Override
+    public Animation getBeamAnimation() {
+        return beamAnimation;
+    }
+
+    @Override
+    public void setBeamAnimation(Animation beamAnimation) {
+        this.beamAnimation = beamAnimation;
     }
 }

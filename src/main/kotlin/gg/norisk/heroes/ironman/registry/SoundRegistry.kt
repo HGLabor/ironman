@@ -13,6 +13,7 @@ object SoundRegistry {
     var REPULSOR_CHARGE = Registry.register(Registries.SOUND_EVENT, "repulsor_charge".toId(), SoundEvent.of("repulsor_charge".toId()))
     var MISSILE_TARGET_FOUND = Registry.register(Registries.SOUND_EVENT, "missile_target_found".toId(), SoundEvent.of("missile_target_found".toId()))
     var MISSILE_EMPTY = Registry.register(Registries.SOUND_EVENT, "missile_empty".toId(), SoundEvent.of("missile_empty".toId()))
+    var ENERGY_BEAM = Registry.register(Registries.SOUND_EVENT, "energy_beam".toId(), SoundEvent.of("energy_beam".toId()))
 
     fun init() {
     }

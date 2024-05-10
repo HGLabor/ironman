@@ -33,6 +33,11 @@
     "sounds": [
       "ironman:missile_empty"
     ]
+  },
+  "energy_beam": {
+    "sounds": [
+      "ironman:energy_beam"
+    ]
   }
 }
 

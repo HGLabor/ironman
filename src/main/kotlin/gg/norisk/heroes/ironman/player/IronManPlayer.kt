@@ -1,5 +1,6 @@
 package gg.norisk.heroes.ironman.player
 
+import gg.norisk.heroes.utils.Animation
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.entity.data.DataTracker
 import net.minecraft.entity.data.TrackedData
@@ -13,6 +14,7 @@ interface IronManPlayer {
     var startFlightTimestamp: Long
     var transformTimestamp: Long
     var repulsorTimestamp: Long
+    var beamAnimation: Animation?
     val missileTargets: MutableMap<UUID, Int>
 }
 
@@ -23,6 +25,8 @@ val ironManTracker: TrackedData<Boolean> =
 val repulsorChargeTracker: TrackedData<Boolean> =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val missileSelector: TrackedData<Boolean> =
+    DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
+val holdingLeftClick: TrackedData<Boolean> =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.BOOLEAN)
 val currentMissileTargetTracker: TrackedData<Optional<UUID>> =
     DataTracker.registerData(PlayerEntity::class.java, TrackedDataHandlerRegistry.OPTIONAL_UUID)
@@ -42,6 +46,10 @@ var PlayerEntity.currentMissileTarget: Optional<UUID>
 var PlayerEntity.isMissileSelecting: Boolean
     get() = this.dataTracker.get(missileSelector)
     set(value) = this.dataTracker.set(missileSelector, value)
+
+var PlayerEntity.isHoldingLeftClick: Boolean
+    get() = this.dataTracker.get(holdingLeftClick)
+    set(value) = this.dataTracker.set(holdingLeftClick, value)
 
 var PlayerEntity.isIronManFlying: Boolean
     get() = this.dataTracker.get(flyTracker)

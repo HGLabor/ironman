@@ -1,9 +1,6 @@
 package gg.norisk.heroes.ironman.mixin.entity;
 
-import gg.norisk.heroes.ironman.abilities.FlyAbility;
-import gg.norisk.heroes.ironman.abilities.MissileAbility;
-import gg.norisk.heroes.ironman.abilities.RepulsorBlastAbility;
-import gg.norisk.heroes.ironman.abilities.TransformAbility;
+import gg.norisk.heroes.ironman.abilities.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.mob.FlyingEntity;
@@ -20,5 +17,6 @@ public abstract class LivingEntityMixin {
         TransformAbility.INSTANCE.handleTrackedDataSet((LivingEntity) (Object) this, trackedData);
         RepulsorBlastAbility.INSTANCE.handleTrackedDataSet((LivingEntity) (Object) this, trackedData);
         MissileAbility.INSTANCE.handleTrackedDataSet((LivingEntity) (Object) this, trackedData);
+        EnergyBeamAbility.INSTANCE.handleTrackedDataSet((LivingEntity) (Object) this, trackedData);
     }
 }

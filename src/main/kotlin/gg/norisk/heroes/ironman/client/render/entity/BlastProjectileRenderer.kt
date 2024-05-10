@@ -1,22 +1,17 @@
 package gg.norisk.heroes.ironman.client.render.entity
 
 import gg.norisk.heroes.ironman.player.projectile.BlastProjectile
+import gg.norisk.heroes.utils.BeamRenderer
 import gg.norisk.heroes.utils.RaycastUtils
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
-import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.render.block.entity.BeaconBlockEntityRenderer
 import net.minecraft.client.render.entity.EntityRenderer
 import net.minecraft.client.render.entity.EntityRendererFactory
-import net.minecraft.client.render.entity.model.EntityModelLayers
-import net.minecraft.client.render.entity.model.LlamaSpitEntityModel
 import net.minecraft.client.util.math.MatrixStack
-import net.minecraft.client.world.ClientWorld
 import net.minecraft.entity.Entity
 import net.minecraft.entity.player.PlayerEntity
-import net.minecraft.particle.ParticleEffect
-import net.minecraft.particle.ParticleTypes
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.RotationAxis
 import net.minecraft.util.math.Vec3d
@@ -97,14 +92,15 @@ class BlastProjectileRenderer(context: EntityRendererFactory.Context) : EntityRe
             return Vec3d(entity.x, entity.y + yOffset, entity.z)
         }
 
-        fun renderBlastRepulsor(
+        fun renderEnergyBeam(
             player: PlayerEntity,
             delta: Float,
             matrixStack: MatrixStack,
             vertexConsumerProvider: VertexConsumerProvider,
-            firstPerson: Boolean
+            firstPerson: Boolean,
+            beamDistance: Double
         ) {
-            val raycast = player.raycast(256.0, 0.0f, true)
+            val raycast = player.raycast(beamDistance, 0.0f, true)
             val targetPos = raycast.pos
             val progress = 0.9f + sin((player.age.toFloat() / 5.0f).toDouble()).toFloat() / 10.0f
             val eyeHeight = player.getEyeHeight(player.pose)
@@ -112,12 +108,13 @@ class BlastProjectileRenderer(context: EntityRendererFactory.Context) : EntityRe
             if (firstPerson) {
                 matrixStack.translate(0.0, eyeHeight.toDouble(), 0.0)
             } else {
+                // matrixStack.translate(-2f,0f,-2f)
                 matrixStack.translate(0.0, 1.25, 0.0)
             }
             val lerpPlayerPos = lerpPosition(player, eyeHeight.toDouble(), delta)
             var lerpPos = targetPos.subtract(lerpPlayerPos)
             var distance: Double = lerpPos.length()
-            val found = RaycastUtils.raycastEntity(player, delta, 64.0f)
+            val found = RaycastUtils.raycastEntity(player, delta, beamDistance.toFloat())
             if (found != null) {
                 distance = found.pos.subtract(lerpPlayerPos).length()
             }
@@ -127,18 +124,18 @@ class BlastProjectileRenderer(context: EntityRendererFactory.Context) : EntityRe
             matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees((1.5707964f - atan2LerpXZ) * 57.295776f))
             matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(acosLerpY * 57.295776f))
 
-            val k = 15961002
+            val k = 3847130
             val n: Int = (k and 0xFF0000) shr 16
             val o: Int = (k and 0xFF00) shr 8
             val p: Int = (k and 0xFF) shr 0
             val color = floatArrayOf(n.toFloat() / 255.0f, o.toFloat() / 255.0f, p.toFloat() / 255.0f)
-            renderBeam(
+            BeamRenderer.renderBeam(
                 matrixStack,
                 vertexConsumerProvider,
                 delta,
                 player.age.toLong(),
-                0,
-                3,
+                0f,
+                distance.toFloat(),
                 color
             )
 

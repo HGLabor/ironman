@@ -1,9 +1,6 @@
 package gg.norisk.heroes.ironman
 
-import gg.norisk.heroes.ironman.abilities.FlyAbility
-import gg.norisk.heroes.ironman.abilities.MissileAbility
-import gg.norisk.heroes.ironman.abilities.RepulsorBlastAbility
-import gg.norisk.heroes.ironman.abilities.TransformAbility
+import gg.norisk.heroes.ironman.abilities.*
 import gg.norisk.heroes.ironman.abilities.keybindings.KeyBindingManager
 import gg.norisk.heroes.ironman.client.render.CameraShaker
 import gg.norisk.heroes.ironman.client.render.entity.BlastProjectileRenderer
@@ -39,12 +36,14 @@ object IronManManager : ModInitializer, DedicatedServerModInitializer, ClientMod
         EntityRegistry.init()
         BlastProjectile.debug()
         MissileAbility.initServer()
+        EnergyBeamAbility.initServer()
     }
 
     override fun onInitializeClient() {
         logger.info("Starting Client IronMan...")
         // Client initialization
         KeyBindingManager.init()
+        EnergyBeamAbility.initClient()
         FlyAbility.initClient()
         CameraShaker.initClient()
         MissileAbility.initClient()
